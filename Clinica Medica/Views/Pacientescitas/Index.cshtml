@@ -1,0 +1,80 @@
+﻿@model IEnumerable<Clinica_Medica.Models.Pacientescita>
+
+@{
+    ViewData["Title"] = "Registro de Citas";
+}
+
+<div class="container mt-4">
+    @if (User.IsInRole("Paciente"))
+    {
+        <div class="jumbotron text-black">
+            <h1 class="display-4">Bienvenido al Registro Online</h1>
+            <p class="lead">Aquí puede ver sus citas registradas:</p>
+            <hr class="my-4">
+            <a asp-action="Create" style="margin-bottom:10px" class="btn btn-light btn-lg">Crear Nueva Cita</a>
+        </div>
+    }
+
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="jumbotron text-black" >
+            <h1 class="display-4">Bienvenido Doctor</h1>
+            <p class="lead">Aquí están sus citas pendientes:</p>
+
+            <form method="get" asp-action="Index" class="form-inline my-2">
+                <div class="input-group mb-3">
+                    <input type="text" name="searchString" class="form-control" style="max-width: 400px;" placeholder="Buscar por nombre de paciente, correo o doctor" value="@ViewData["CurrentFilter"]" />
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" style="margin-left:5px" type="submit">Buscar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    }
+
+    <table class="table table-hover table-bordered table-striped">
+        <thead class="thead-dark" style="background-color: #000; color:#fff">
+            <tr>
+                @if (User.IsInRole("Admin"))
+                {
+                    <th>@Html.DisplayNameFor(model => model.NombrePaciente)</th>
+                    <th>@Html.DisplayNameFor(model => model.Correo)</th>
+                    <th>@Html.DisplayNameFor(model => model.Telefono)</th>
+                }
+                <th>@Html.DisplayNameFor(model => model.FechaCita)</th>
+                <th>@Html.DisplayNameFor(model => model.MotivoCita)</th>
+                <th>@Html.DisplayNameFor(model => model.DoctorNombre)</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <td>@Html.DisplayFor(modelItem => item.NombrePaciente)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Correo)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Telefono)</td>
+                    }
+                    <td>@Html.DisplayFor(modelItem => item.FechaCita)</td>
+                    <td>@Html.DisplayFor(modelItem => item.MotivoCita)</td>
+                    <td>@Html.DisplayFor(modelItem => item.DoctorNombre)</td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a asp-action="Details" class="btn btn-secondary btn-sm" asp-route-id="@item.Id">Detalles</a>
+                            }
+                            @if (User.IsInRole("Paciente"))
+                            {
+                                <a asp-action="Edit" class="btn btn-warning btn-sm" asp-route-id="@item.Id">Editar</a>
+                                <a asp-action="Delete" class="btn btn-danger btn-sm" asp-route-id="@item.Id">Borrar</a>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
